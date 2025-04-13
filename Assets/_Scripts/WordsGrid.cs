@@ -1,30 +1,28 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(GridLayoutGroup))]
-public class WordsGrid :MonoBehaviour
-{   
-    [SerializeField]GameManager gameManager;
-    private List<GridElement> selectedGridElements = new ();
-    private Vector2Int direction;
-    public bool isSelecting;
-    private GridLayoutGroup gridLayout;
-    private int rows;
-    private int cols;
+public class WordsGrid 
+{
+    private readonly GameManager _gameManager;
+    private readonly List<GridElement> _selectedGridElements = new ();
+    private Vector2Int _direction;
+    private bool _isSelecting;
 
-    private void Start()
+    private StringBuilder _formedWord=new();
+    private bool _isCorrect;
+    private Vector2Int _newDir= Vector2Int.zero;
+    public WordsGrid(GameManager gameManager , GridLayoutGroup gridLayout)
     {
-        gridLayout = GetComponent<GridLayoutGroup>();
-        gridLayout.GetGridRowsAndColumn(out rows, out cols);
+        _gameManager = gameManager;
+        gridLayout.GetGridRowsAndColumn(out var rows, out var cols);
+        GridElement element;
         for(int i=0;i<rows;i++)
         {
             for(int j=0;j<cols;j++)
             {
-                GridElement element = gridLayout.transform.GetChild(i * cols + j).GetComponent<GridElement>();
+                element = gridLayout.transform.GetChild(i * cols + j).GetComponent<GridElement>();
                 element.gridPosition = new Vector2Int(j, i);
                 element.OnClicked += StartWordSelection;
                 element.OnOver += TryAddLetter;
@@ -34,73 +32,62 @@ public class WordsGrid :MonoBehaviour
     }
     private void StartWordSelection(GridElement element)
     {
-        isSelecting = true;
-        selectedGridElements.Clear();
-        direction = Vector2Int.zero;
+        _isSelecting = true;
+        _selectedGridElements.Clear();
+        _direction = Vector2Int.zero;
         AddToWord(element);
 
     }
-
     private void TryAddLetter(GridElement element)
     {
-        if ( !isSelecting || selectedGridElements.Contains(element)) return;
-        var newDir = element.gridPosition - selectedGridElements[^1].gridPosition;
+        if ( !_isSelecting || _selectedGridElements.Contains(element)) return;
+        _newDir = element.gridPosition - _selectedGridElements[^1].gridPosition;
 
-        if (selectedGridElements.Count == 1)
+        if (_selectedGridElements.Count == 1)
         {
-            if (IsValidDirection(newDir))
+            if (IsValidDirection(_newDir))
             {
-                direction = newDir;
+                _direction = _newDir;
                 AddToWord(element);
             }
         }
         else
         {
-            if (newDir == direction)
+            if (_newDir == _direction)
             {
                 AddToWord(element);
             }
         }
     }
-
     private void AddToWord(GridElement element)
     {
-        selectedGridElements.Add(element);
+        _selectedGridElements.Add(element);
         element.HighlightColor();
 
     }
-
     private void EndWordSelection()
     {
-        isSelecting = false;
-        StringBuilder formedWord = new ();
-        foreach (var elem in selectedGridElements)
-            formedWord.Append(elem.letter);
+        _isSelecting = false;
+        _formedWord.Clear();
+        foreach (var elem in _selectedGridElements)
+            _formedWord.Append(elem.letter);
 
-        // Checks if the word matches any target here
-        if (gameManager.CompareWord(formedWord.ToString()))
+        _isCorrect = _gameManager.CompareWord(_formedWord.ToString());
+
+        foreach (var elem in _selectedGridElements)
         {
-            foreach (var elem in selectedGridElements)
-            {
+            if (_isCorrect)
                 elem.SelectedColor();
-            }
-        }
-        else
-        {
-            foreach (var elem in selectedGridElements)
-            {
+            else
                 elem.ResetColor();
-            }
         }
     }
-
     private bool IsValidDirection(Vector2Int dir)
     {
         return dir is { x: 1, y: 0 } or { y: 1, x: 0 };
     }
 }
-
-internal static class GridLayoutGroupExtension
+static class GridLayoutGroupExtension
 {
     public static void GetGridRowsAndColumn(this GridLayoutGroup gridLayout,out int rows, out int cols)
     {
@@ -117,9 +104,8 @@ internal static class GridLayoutGroupExtension
             cols = constraintCount;
             rows = Mathf.CeilToInt(childCount / (float)cols);
         }
-        else // Flexible (approximate)
+        else 
         {
-            // Estimate based on cell size and grid dimensions
             RectTransform rect = gridLayout.GetComponent<RectTransform>();
             float width = rect.rect.width;
             float cellWidth = gridLayout.cellSize.x + gridLayout.spacing.x;
