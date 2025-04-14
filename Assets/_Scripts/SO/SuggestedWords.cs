@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "SuggestedWords", menuName = "Scriptable Objects/SuggestedWords")]
 public class SuggestedWords : ScriptableObject

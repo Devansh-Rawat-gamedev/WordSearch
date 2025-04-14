@@ -16,9 +16,11 @@ public class WordsGrid
     private bool _isCorrect;
     private Vector2Int _newDir= Vector2Int.zero;
     private RectTransform rect;
+    private GridLayoutGroup gridLayout;
     public WordsGrid(GameManager gameManager , GridLayoutGroup gridLayout)
     {
         _gameManager = gameManager;
+        this.gridLayout = gridLayout;
         gridLayout.GetGridRowsAndColumn(out var rows, out var cols);
         GridElement element;
         for(int i=0;i<rows;i++)
@@ -30,6 +32,22 @@ public class WordsGrid
                 element.OnClicked += StartWordSelection;
                 element.OnOver += TryAddLetter;
                 element.OnSelected += EndWordSelection;
+            }
+        }
+    }
+     ~WordsGrid()
+    {
+        gridLayout.GetGridRowsAndColumn(out var rows, out var cols);
+        GridElement element;
+        for(int i=0;i<rows;i++)
+        {
+            for(int j=0;j<cols;j++)
+            {
+                element = gridLayout.transform.GetChild(i * cols + j).GetComponent<GridElement>();
+                element.gridPosition = new Vector2Int(j, i);
+                element.OnClicked -= StartWordSelection;
+                element.OnOver -= TryAddLetter;
+                element.OnSelected -= EndWordSelection;
             }
         }
     }
@@ -82,17 +100,17 @@ public class WordsGrid
 
         _isCorrect = _gameManager.CompareWord(_formedWord.ToString());
 
-        MarkCorrect();
+        _gameManager.StartCoroutine(MarkCorrect());
     }
     private bool IsValidDirection(Vector2Int dir)
     {
         return dir is { x: 1, y: 0 } or { y: 1, x: 0 };
     }
-    private async Task MarkCorrect()
+    private IEnumerator MarkCorrect()
     {
         foreach (var elem in _selectedGridElements)
         {
-            await Task.Delay(0100);
+            yield return new WaitForSeconds(0.1f);
             if (_isCorrect)
                 elem.SelectedColor();
             else

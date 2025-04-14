@@ -1,0 +1,8 @@
+C:/fake d drive/projects/WordSearch/.utmp/RelWithDebInfo/616am4f4/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/fake d drive/projects/WordSearch/.utmp/RelWithDebInfo/616am4f4/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+C:/fake d drive/projects/WordSearch/.utmp/RelWithDebInfo/616am4f4/armeabi-v7a/GameActivity/CMakeFiles/game.dir
+C:/fake d drive/projects/WordSearch/.utmp/RelWithDebInfo/616am4f4/armeabi-v7a/GameActivity/CMakeFiles/edit_cache.dir
+C:/fake d drive/projects/WordSearch/.utmp/RelWithDebInfo/616am4f4/armeabi-v7a/GameActivity/CMakeFiles/rebuild_cache.dir
+C:/fake d drive/projects/WordSearch/.utmp/RelWithDebInfo/616am4f4/armeabi-v7a/FramePacing/CMakeFiles/swappywrapper.dir
+C:/fake d drive/projects/WordSearch/.utmp/RelWithDebInfo/616am4f4/armeabi-v7a/FramePacing/CMakeFiles/edit_cache.dir
+C:/fake d drive/projects/WordSearch/.utmp/RelWithDebInfo/616am4f4/armeabi-v7a/FramePacing/CMakeFiles/rebuild_cache.dir

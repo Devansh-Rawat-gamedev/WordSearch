@@ -17,7 +17,7 @@ public class GridElement : MonoBehaviour , IPointerDownHandler ,IPointerEnterHan
     public event Action OnSelected;
     #endregion
 
-    private void Start()
+    private void Awake()
     {
         letter =char.ToUpper( GetComponentInChildren<TextMeshProUGUI>().text[0]);
         image = GetComponent<Image>();
