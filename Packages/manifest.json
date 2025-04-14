@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.unity.collab-proxy": "2.7.1",
     "com.unity.ide.rider": "3.0.31",
     "com.unity.inputsystem": "1.12.0",
     "com.unity.multiplayer.center": "1.0.0",

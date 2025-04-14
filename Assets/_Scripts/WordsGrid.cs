@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +15,7 @@ public class WordsGrid
     private StringBuilder _formedWord=new();
     private bool _isCorrect;
     private Vector2Int _newDir= Vector2Int.zero;
+    private RectTransform rect;
     public WordsGrid(GameManager gameManager , GridLayoutGroup gridLayout)
     {
         _gameManager = gameManager;
@@ -36,7 +39,8 @@ public class WordsGrid
         _selectedGridElements.Clear();
         _direction = Vector2Int.zero;
         AddToWord(element);
-
+        rect = element.GetComponent<RectTransform>();
+        _gameManager.StartCoroutine(Interpolate(rect, new Vector2(1.5f, 1.5f), 0.1f));
     }
     private void TryAddLetter(GridElement element)
     {
@@ -49,6 +53,8 @@ public class WordsGrid
             {
                 _direction = _newDir;
                 AddToWord(element);
+                rect = element.GetComponent<RectTransform>();
+                _gameManager.StartCoroutine(Interpolate(rect, new Vector2(1.5f, 1.5f), 0.1f));
             }
         }
         else
@@ -56,6 +62,8 @@ public class WordsGrid
             if (_newDir == _direction)
             {
                 AddToWord(element);
+                rect = element.GetComponent<RectTransform>();
+                _gameManager.StartCoroutine(Interpolate(rect, new Vector2(1.5f, 1.5f), 0.1f));
             }
         }
     }
@@ -74,17 +82,38 @@ public class WordsGrid
 
         _isCorrect = _gameManager.CompareWord(_formedWord.ToString());
 
-        foreach (var elem in _selectedGridElements)
-        {
-            if (_isCorrect)
-                elem.SelectedColor();
-            else
-                elem.ResetColor();
-        }
+        MarkCorrect();
     }
     private bool IsValidDirection(Vector2Int dir)
     {
         return dir is { x: 1, y: 0 } or { y: 1, x: 0 };
+    }
+    private async Task MarkCorrect()
+    {
+        foreach (var elem in _selectedGridElements)
+        {
+            await Task.Delay(0100);
+            if (_isCorrect)
+                elem.SelectedColor();
+            else
+                elem.ResetColor();
+            
+        }
+
+    }
+
+
+    private IEnumerator Interpolate(RectTransform rect , Vector2 end , float time)
+    {
+        float t = 0;
+        while (t < time)
+        {
+            t += Time.deltaTime;
+            rect.localScale = Vector2.Lerp(rect.localScale, end, t);
+            yield return null;
+        }
+
+        _gameManager.StartCoroutine(Interpolate(rect, Vector2.one, 0.1f));
     }
 }
 static class GridLayoutGroupExtension
