@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
             if (textComponent)
             {
                 textComponent.text = word;
-                _suggestedWordText.Add(word.ToUpper(), (textComponent,false));
+                _suggestedWordText.Add(word, (textComponent,false));
             }
         }
         _wordsGrid = new WordsGrid(this, gridLayoutGroup);
@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 
     public bool CompareWord(string word)
     {
-        string upperWord = word.ToUpper();
+        string upperWord = word;
         if (_suggestedWordText.TryGetValue(upperWord, out var value)  && !value.Item2)
         {
             value.Item1.fontStyle |= FontStyles.Strikethrough;
